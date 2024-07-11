@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="AssuranceService" />
+        <module name="configService" />
+        <module name="VehiculeService" />
+        <module name="VehiculeSpecificationService" />
+        <module name="DiscoveryService" />
+        <module name="gatewayService" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="serviceAssurance" target="21" />
+      <module name="serviceDiscovery" target="21" />
+      <module name="serviceVehicule" target="21" />
+      <module name="serviceVehiculeSpecification" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="AssuranceService" options="-parameters" />
+      <module name="DiscoveryService" options="-parameters" />
+      <module name="VehiculeService" options="-parameters" />
+      <module name="VehiculeSpecificationService" options="-parameters" />
+      <module name="configService" options="-parameters" />
+      <module name="gatewayService" options="-parameters" />
+      <module name="serviceAssurance" options="-parameters" />
+      <module name="serviceDiscovery" options="-parameters" />
+      <module name="serviceVehicule" options="-parameters" />
+      <module name="serviceVehiculeSpecification" options="-parameters" />
+    </option>
+  </component>
+</project>

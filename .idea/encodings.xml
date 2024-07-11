@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/services/AssuranceService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/ConfigService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/DiscoveryService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/GatewayService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/VehiculeService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/VehiculeSpecificationService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/serviceDiscovery/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/serviceVehicule/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/serviceVehiculeSpecification/src/main/java" charset="UTF-8" />
+  </component>
+</project>

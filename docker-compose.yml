@@ -1,0 +1,22 @@
+services:
+  postgresql:
+    container_name: vehicule-service_db_pg
+    image: postgres
+    environment:
+      POSTGRES_USER: Yassine
+      POSTGRES_PASSWORD: RIAHI
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+networks:
+  microservices-net:
+    driver: bridge
+
+volumes:
+  postgres:

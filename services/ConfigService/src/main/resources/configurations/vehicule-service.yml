@@ -1,0 +1,18 @@
+server:
+  port: 8070
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/vehicules
+    username: Yassine
+    password: RIAHI
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+application:
+  config:
+    assurance-url: http://localhost:8222/api/assurances
+    vehiculeSpecification-url: http://localhost:8222/api/vehiculespecif

@@ -1,0 +1,21 @@
+server:
+  port: 8222
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: assurance-service
+          uri: lb:http://ASSURANCE-SERVICE
+          predicates:
+            - Path=/api/assurances/**
+        - id: vehicule-service
+          uri: lb:http://VEHICULE-SERVICE
+          predicates:
+            - Path=/api/vehicules/**
+        - id: vehicule-specification-service
+          uri: lb:http://VEHICULE-SPECIFICATION-SERVICE
+          predicates:
+            - Path=/api/vehiculespecif/**

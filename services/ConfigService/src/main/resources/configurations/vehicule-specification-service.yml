@@ -1,0 +1,13 @@
+server:
+  port: 8060
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/vehiculespecif
+    username: Yassine
+    password: RIAHI
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
