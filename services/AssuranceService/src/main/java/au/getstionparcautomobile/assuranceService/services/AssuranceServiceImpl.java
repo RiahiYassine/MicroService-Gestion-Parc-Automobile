@@ -31,7 +31,7 @@ public class AssuranceServiceImpl implements IAssuranceService{
     }
 
     @Override
-    public void updateAssurance(Long id , AssuranceRequest assuranceRequest) {
+    public AssuranceResponse updateAssurance(Long id , AssuranceRequest assuranceRequest) {
         Assurance existingAssurance = assuranceRepository.findById(id).orElseThrow(() -> new AssuranceNotFoundException("Assurance not found for this id :: " + assuranceRequest.id()));
         existingAssurance.setNomFournisseur(assuranceRequest.nomFournisseur());
         existingAssurance.setNumeroPolice(assuranceRequest.numeroPolice());
@@ -41,7 +41,7 @@ public class AssuranceServiceImpl implements IAssuranceService{
         existingAssurance.setDetailsCouverture(assuranceRequest.detailsCouverture());
         existingAssurance.setNomFichier(assuranceRequest.nomFichier());
         existingAssurance.setDonneesFichier(assuranceRequest.donneesFichier());
-        assuranceRepository.save(existingAssurance);
+        return assuranceMapper.toResponse(this.assuranceRepository.save(existingAssurance));
     }
 
     @Override

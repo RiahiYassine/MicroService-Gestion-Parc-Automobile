@@ -21,9 +21,9 @@ public class VehiculeSpecifController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateVehiculeSpecif(@PathVariable Long id, @RequestBody VehiculeSpecifRequest vehiculeSpecifRequest) {
-        iVehSpecifService.updateVehiculeSpecif(id, vehiculeSpecifRequest);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<VehiculeSpecifResponse> updateVehiculeSpecif(@PathVariable Long id, @RequestBody VehiculeSpecifRequest vehiculeSpecifRequest) {
+        VehiculeSpecifResponse vehiculeSpecifResponse = iVehSpecifService.updateVehiculeSpecif(id, vehiculeSpecifRequest);
+        return ResponseEntity.ok(vehiculeSpecifResponse);
     }
 
     @DeleteMapping("/{id}")

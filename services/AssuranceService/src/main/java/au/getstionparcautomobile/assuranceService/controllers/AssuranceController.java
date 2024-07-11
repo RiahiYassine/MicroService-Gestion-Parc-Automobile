@@ -21,14 +21,13 @@ public class AssuranceController {
 
     @PostMapping
     public ResponseEntity<AssuranceResponse> createAssurance(@RequestBody @Valid AssuranceRequest assuranceRequest){
-        System.out.println("sup");
         AssuranceResponse assuranceResponse = this.iAssuranceService.createAssurance(assuranceRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(assuranceResponse);
     }
-    @PutMapping("{id}")
-    public ResponseEntity<Void> updateAssurance(@PathVariable Long id,@RequestBody @Valid AssuranceRequest assuranceRequest){
-         this.iAssuranceService.updateAssurance(id,assuranceRequest);
-         return ResponseEntity.ok().build();
+    @PutMapping("/{id}")
+    public ResponseEntity<AssuranceResponse> updateAssurance(@PathVariable Long id,@RequestBody @Valid AssuranceRequest assuranceRequest){
+         AssuranceResponse assuranceResponse = this.iAssuranceService.updateAssurance(id,assuranceRequest);
+         return ResponseEntity.ok().body(assuranceResponse);
     }
     @DeleteMapping("{id}")
     public void deleteAssuranceById(@PathVariable Long id){

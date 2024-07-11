@@ -4,11 +4,12 @@ import au.gestionparcautomobile.vehiculeService.feignClients.assurance.Assurance
 import au.gestionparcautomobile.vehiculeService.feignClients.vehiculeSpecif.VehiculeSpecifResponse;
 
 import java.util.Date;
+import java.util.List;
 
 public record VehiculeResponse(
         Long id,
         Date dateAchat,
         boolean disponibilite,
-        AssuranceResponse assurance,
+        List<AssuranceResponse> assurance,
         VehiculeSpecifResponse vehiculeSpecif
 ) {}

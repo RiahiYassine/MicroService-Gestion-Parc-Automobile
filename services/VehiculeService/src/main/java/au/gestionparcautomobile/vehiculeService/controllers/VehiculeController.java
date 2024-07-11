@@ -17,7 +17,6 @@ public class VehiculeController {
 
     @PostMapping
     public VehiculeResponse createVehicle(@RequestBody @Valid VehiculeRequest vehiculeRequest) {
-        System.out.println("\n\n"+vehiculeRequest);
         VehiculeResponse vehicleResponse = iVehiculeService.createVehicule(vehiculeRequest);
         return vehicleResponse;
     }

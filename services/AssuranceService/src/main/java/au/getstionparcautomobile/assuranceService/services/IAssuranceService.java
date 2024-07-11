@@ -6,7 +6,7 @@ import au.getstionparcautomobile.assuranceService.records.AssuranceResponse;
 public interface IAssuranceService {
 
     AssuranceResponse createAssurance(AssuranceRequest assuranceRequest);
-    void updateAssurance(Long id , AssuranceRequest assuranceRequest);
+    AssuranceResponse updateAssurance(Long id , AssuranceRequest assuranceRequest);
     void deleteAssurance(Long id);
     AssuranceResponse getAssuranceById(Long id);
 }

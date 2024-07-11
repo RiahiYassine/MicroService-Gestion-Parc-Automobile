@@ -11,7 +11,7 @@ public record AssuranceRequest(
         @NotBlank(message = "Le numéro de police ne doit pas être vide.")
         String numeroPolice,
         @NotNull(message = "La date de début de couverture ne doit pas être nulle.")
-        @FutureOrPresent(message = "La date de début de couverture doit être aujourd'hui ou dans le futur.")
+        @PastOrPresent(message = "La date de début de couverture doit être aujourd'hui ou avant.")
         Date dateDebutCouverture,
         @NotNull(message = "La date de fin de couverture ne doit pas être nulle.")
         @Future(message = "La date de fin de couverture doit être dans le futur.")

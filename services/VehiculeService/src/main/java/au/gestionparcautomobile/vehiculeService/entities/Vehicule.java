@@ -17,9 +17,12 @@ public class Vehicule {
     private Long id;
     private Date dateAchat;
     private boolean disponibilite;
-    private Long assuranceId;
     private Long vehiculeSpecifId;
-    private Long enregistrementVehiculeId;
+    @ElementCollection
+    @CollectionTable(name = "vehicule_assurances", joinColumns = @JoinColumn(name = "vehicule_id"))
+    @Column(name = "assurance_id")
+    private List<Long> assuranceId;
     @ElementCollection
     private List<Long> demandesIds;
+    private Long enregistrementVehiculeId;
 }

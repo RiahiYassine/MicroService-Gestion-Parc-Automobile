@@ -16,6 +16,7 @@ import au.gestionparcautomobile.vehiculeSpecificationService.mapper.MarqueMapper
 import au.gestionparcautomobile.vehiculeSpecificationService.mapper.ModeleMapper;
 import au.gestionparcautomobile.vehiculeSpecificationService.mapper.VehiculeSpecifMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 @Service
 @RequiredArgsConstructor
@@ -50,18 +51,18 @@ public class VehiculeSpecifServiceImpl implements IVehiculeSpecifService{
     }
 
     @Override
-    @Transactional
-    public void updateVehiculeSpecif(Long id, VehiculeSpecifRequest vehiculeSpecifRequest) {
-
+    public VehiculeSpecifResponse updateVehiculeSpecif(Long id, VehiculeSpecifRequest vehiculeSpecifRequest) {
         VehiculeSpecif vehiculeSpecif = vehiculeSpecifRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("VehiculeSpecif not found with id: " + id));
-        MarqueRequest marqueRequest = vehiculeSpecifRequest.modeleRequest().marqueRequest();
-        Marque marque = marqueRepository.findById(vehiculeSpecif.getModele().getMarque().getId()).orElseThrow(() -> new IllegalArgumentException("Marque not found with id: " + vehiculeSpecif.getModele().getMarque().getId()));
-        marque.setNomMarque(marqueRequest.nomMarque());
-        Marque savedMarque = marqueRepository.save(marque);
 
         ModeleRequest modeleRequest = vehiculeSpecifRequest.modeleRequest();
-        Modele modele = modeleRepository.findById(vehiculeSpecif.getModele().getId()).orElseThrow(() -> new IllegalArgumentException("Modele not found with id: " + vehiculeSpecif.getModele().getId()));
+        Modele modele = modeleRepository.findById(vehiculeSpecif.getModele().getId()).orElseThrow(()-> new RuntimeException("Modele not found with"));
         modele.setNomModel(modeleRequest.modeleName());
+
+        MarqueRequest marqueRequest = vehiculeSpecifRequest.modeleRequest().marqueRequest();
+        Marque marque = marqueRepository.findById(modele.getMarque().getId()).orElseThrow(() -> new IllegalArgumentException("Marque not found with"));
+        marque.setNomMarque(marqueRequest.nomMarque());
+
+        Marque savedMarque = marqueRepository.save(marque);
         modele.setMarque(savedMarque);
         Modele savedModele = modeleRepository.save(modele);
 
@@ -69,11 +70,13 @@ public class VehiculeSpecifServiceImpl implements IVehiculeSpecifService{
         vehiculeSpecif.setTypeImmatriculation(vehiculeSpecifRequest.typeImmatriculation());
         vehiculeSpecif.setImmatriculation(vehiculeSpecifRequest.immatriculation());
         vehiculeSpecif.setNomberPlace(vehiculeSpecifRequest.nombreDePlaces());
+        vehiculeSpecif.setPuissance(vehiculeSpecifRequest.puissance());
+        vehiculeSpecif.setPoids(vehiculeSpecifRequest.poids());
         vehiculeSpecif.setKilometrage(vehiculeSpecifRequest.kilometrage());
         vehiculeSpecif.setModele(savedModele);
         vehiculeSpecif.setTypeCarburant(vehiculeSpecifRequest.typeCarburant());
-        vehiculeSpecif.setVehiculeId(vehiculeSpecifRequest.vehiculeId());
-        vehiculeSpecifRepository.save(vehiculeSpecif);
+
+        return vehiculeSpecifMapper.toResponse(vehiculeSpecifRepository.save(vehiculeSpecif));
 
     }
 

@@ -17,7 +17,7 @@ public interface AssuranceClient {
     AssuranceResponse getAssuranceById(@PathVariable Long id);
 
     @PutMapping("{id}")
-    AssuranceResponse updateAssurance(@PathVariable Long id, @RequestBody AssuranceRequest assuranceRequest);
+    AssuranceResponse updateAssurance(@PathVariable Long id, @RequestBody @Valid AssuranceRequest assuranceRequest);
 
     @DeleteMapping("{id}")
     void deleteAssuranceById(@PathVariable Long id);

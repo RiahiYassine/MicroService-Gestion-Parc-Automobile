@@ -6,7 +6,7 @@ import au.gestionparcautomobile.vehiculeSpecificationService.records.VehiculeSpe
 public interface IVehiculeSpecifService {
 
     VehiculeSpecifResponse createVehiculeSpecif(VehiculeSpecifRequest vehiculeSpecifRequest);
-    void updateVehiculeSpecif(Long id,VehiculeSpecifRequest vehiculeSpecifRequest);
+    VehiculeSpecifResponse updateVehiculeSpecif(Long id,VehiculeSpecifRequest vehiculeSpecifRequest);
     void deleteVehiculeSpecifById(Long id);
     VehiculeSpecifResponse getVehiculeSpecifById(Long id);
 }

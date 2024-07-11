@@ -31,6 +31,7 @@ public class VehiculeServiceImpl implements IVehiculeService {
     @Override
     @Transactional
     public VehiculeResponse createVehicule(VehiculeRequest vehiculeRequest) {
+        System.out.println("34"+vehiculeRequest);
         Vehicule vehicule = Vehicule.builder()
                 .dateAchat(vehiculeRequest.dateAchat())
                 .disponibilite(true)
@@ -39,18 +40,29 @@ public class VehiculeServiceImpl implements IVehiculeService {
         Vehicule savedVehicule = vehiculeRepository.save(vehicule);
         Long vehiculeId = savedVehicule.getId();
 
-        AssuranceRequest updatedAssuranceRequest = vehiculeRequest.assurance().withVehiculeId(vehiculeId);
-        AssuranceResponse assuranceResponse = assuranceClient.createAssurance(updatedAssuranceRequest);
+        List<Long> assuranceIds = vehiculeRequest.assurance().stream()
+                .map(assuranceRequest -> {
+                    AssuranceRequest updatedAssuranceRequest = assuranceRequest.withVehiculeId(vehiculeId);
+                    AssuranceResponse assuranceResponse = assuranceClient.createAssurance(updatedAssuranceRequest);
+                    return assuranceResponse.id();
+                })
+                .collect(Collectors.toList());
+
+        savedVehicule.setAssuranceId(assuranceIds);
 
         VehiculeSpecifRequest updatedSpecifRequest = vehiculeRequest.specificationsVehicule().withVehiculeId(vehiculeId);
+        System.out.println("54"+updatedSpecifRequest);
         VehiculeSpecifResponse specificationResponse = vehiculeSpecifClient.createVehiculeSpecif(updatedSpecifRequest);
 
-        savedVehicule.setAssuranceId(assuranceResponse.id());
         savedVehicule.setVehiculeSpecifId(specificationResponse.id());
 
         Vehicule updatedVehicule = vehiculeRepository.save(savedVehicule);
 
-        return vehiculeMapper.toResponse(updatedVehicule, assuranceResponse, specificationResponse);
+        List<AssuranceResponse> assuranceResponses = assuranceIds.stream()
+                .map(assuranceClient::getAssuranceById)
+                .collect(Collectors.toList());
+
+        return vehiculeMapper.toResponse(updatedVehicule, assuranceResponses, specificationResponse);
     }
 
     @Override
@@ -59,10 +71,13 @@ public class VehiculeServiceImpl implements IVehiculeService {
         if (optionalVehicule.isEmpty()) {
             throw new RuntimeException("Véhicule non trouvé");
         }
+
         Vehicule vehicule = optionalVehicule.get();
-        AssuranceResponse assuranceResponse = assuranceClient.getAssuranceById(vehicule.getAssuranceId());
+        List<AssuranceResponse> assuranceResponses = vehicule.getAssuranceId().stream()
+                .map(assuranceClient::getAssuranceById)
+                .collect(Collectors.toList());
         VehiculeSpecifResponse specificationResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
-        return vehiculeMapper.toResponse(vehicule, assuranceResponse, specificationResponse);
+        return vehiculeMapper.toResponse(vehicule, assuranceResponses, specificationResponse);
     }
 
     @Override
@@ -73,14 +88,25 @@ public class VehiculeServiceImpl implements IVehiculeService {
         }
         Vehicule vehicule = optionalVehicule.get();
 
-        AssuranceResponse assuranceResponse = assuranceClient.updateAssurance(vehicule.getAssuranceId(), vehiculeRequest.assurance());
+        List<Long> assuranceIds = vehiculeRequest.assurance().stream()
+                .map(assuranceRequest -> {
+                    System.out.println("\nhey1:\n"+assuranceRequest.id());
+                    AssuranceResponse assuranceResponse = assuranceClient.updateAssurance(assuranceRequest.id(), assuranceRequest);
+                    System.out.println("\nhey2\n");
+                    return assuranceResponse.id();
+                })
+                .collect(Collectors.toList());
+
         VehiculeSpecifResponse specificationResponse = vehiculeSpecifClient.updateVehiculeSpecif(vehicule.getVehiculeSpecifId(), vehiculeRequest.specificationsVehicule());
 
         vehicule.setDateAchat(vehiculeRequest.dateAchat());
+        vehicule.setAssuranceId(assuranceIds);
 
         Vehicule updatedVehicule = vehiculeRepository.save(vehicule);
-
-        return vehiculeMapper.toResponse(updatedVehicule, assuranceResponse, specificationResponse);
+        List<AssuranceResponse> assuranceResponses = assuranceIds.stream()
+                .map(assuranceClient::getAssuranceById)
+                .collect(Collectors.toList());
+        return vehiculeMapper.toResponse(updatedVehicule, assuranceResponses, specificationResponse);
     }
 
     @Override
@@ -89,7 +115,7 @@ public class VehiculeServiceImpl implements IVehiculeService {
         if (vehiculeResponse == null) {
             throw new RuntimeException("Véhicule non trouvé");
         }
-        assuranceClient.deleteAssuranceById(vehiculeResponse.assurance().id());
+        vehiculeResponse.assurance().forEach(assurance -> assuranceClient.deleteAssuranceById(assurance.id()));
         vehiculeSpecifClient.deleteVehiculeSpecifById(vehiculeResponse.vehiculeSpecif().id());
         vehiculeRepository.deleteById(id);
     }
@@ -98,11 +124,12 @@ public class VehiculeServiceImpl implements IVehiculeService {
     public List<VehiculeResponse> getAllVehicules() {
         List<Vehicule> vehicules = vehiculeRepository.findAll();
         List<VehiculeResponse> vehiculesResponse = vehicules.stream().map(vehicule -> {
-            var assuranceResponse = assuranceClient.getAssuranceById(vehicule.getAssuranceId());
+            List<AssuranceResponse> assuranceResponses = vehicule.getAssuranceId().stream()
+                    .map(assuranceClient::getAssuranceById)
+                    .collect(Collectors.toList());
             var specificationResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
-            return vehiculeMapper.toResponse(vehicule, assuranceResponse, specificationResponse);
+            return vehiculeMapper.toResponse(vehicule, assuranceResponses, specificationResponse);
         }).collect(Collectors.toList());
         return vehiculesResponse;
     }
-
 }
