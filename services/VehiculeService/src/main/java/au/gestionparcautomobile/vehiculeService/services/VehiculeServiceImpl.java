@@ -123,13 +123,12 @@ public class VehiculeServiceImpl implements IVehiculeService {
     @Override
     public List<VehiculeResponse> getAllVehicules() {
         List<Vehicule> vehicules = vehiculeRepository.findAll();
-        List<VehiculeResponse> vehiculesResponse = vehicules.stream().map(vehicule -> {
+        return vehicules.stream().map(vehicule -> {
             List<AssuranceResponse> assuranceResponses = vehicule.getAssuranceId().stream()
                     .map(assuranceClient::getAssuranceById)
                     .collect(Collectors.toList());
             var specificationResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
             return vehiculeMapper.toResponse(vehicule, assuranceResponses, specificationResponse);
         }).collect(Collectors.toList());
-        return vehiculesResponse;
     }
 }

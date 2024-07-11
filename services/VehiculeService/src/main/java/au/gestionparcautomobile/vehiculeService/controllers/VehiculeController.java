@@ -17,23 +17,20 @@ public class VehiculeController {
 
     @PostMapping
     public VehiculeResponse createVehicle(@RequestBody @Valid VehiculeRequest vehiculeRequest) {
-        VehiculeResponse vehicleResponse = iVehiculeService.createVehicule(vehiculeRequest);
-        return vehicleResponse;
+        return iVehiculeService.createVehicule(vehiculeRequest);
     }
 
 
     @GetMapping("/{id}")
     public VehiculeResponse getVehiculeById(@PathVariable Long id) {
-        VehiculeResponse vehiculeResponse = iVehiculeService.getVehiculeById(id);
-        return vehiculeResponse;
+        return iVehiculeService.getVehiculeById(id);
     }
 
 
 
     @PutMapping("/{id}")
     public VehiculeResponse updateVehicle(@PathVariable Long id, @RequestBody VehiculeRequest vehiculeRequest) {
-        VehiculeResponse updatedVehicle = iVehiculeService.updateVehicule(id, vehiculeRequest);
-        return updatedVehicle;
+        return iVehiculeService.updateVehicule(id, vehiculeRequest);
     }
 
     @DeleteMapping("/{id}")
@@ -44,8 +41,7 @@ public class VehiculeController {
 
     @GetMapping
     public List<VehiculeResponse> getVehicules() {
-        List<VehiculeResponse> vehiculeResponse = iVehiculeService.getAllVehicules();
-        return vehiculeResponse;
+        return iVehiculeService.getAllVehicules();
     }
     
 }

@@ -18,7 +18,7 @@ public class AssuranceServiceImpl implements IAssuranceService{
 
     @Override
     public AssuranceResponse getAssuranceById(Long id) {
-        Assurance assurance = assuranceRepository.findById(id).orElseThrow(() -> new AssuranceNotFoundException("Assurance not found for this id :: " + id));;
+        Assurance assurance = assuranceRepository.findById(id).orElseThrow(() -> new AssuranceNotFoundException("Assurance not found for this id :: " + id));
         return assuranceMapper.toResponse(assurance);
     }
 
@@ -26,8 +26,7 @@ public class AssuranceServiceImpl implements IAssuranceService{
     public AssuranceResponse createAssurance(AssuranceRequest assuranceRequest) {
         Assurance assurance = this.assuranceMapper.toEntity(assuranceRequest);
         Assurance assuranceSaved = this.assuranceRepository.save(assurance);
-        AssuranceResponse assuranceResponse = assuranceMapper.toResponse(assuranceSaved);
-        return assuranceResponse;
+        return assuranceMapper.toResponse(assuranceSaved);
     }
 
     @Override

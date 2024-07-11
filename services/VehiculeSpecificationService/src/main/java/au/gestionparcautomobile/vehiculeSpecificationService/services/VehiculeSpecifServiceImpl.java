@@ -16,7 +16,6 @@ import au.gestionparcautomobile.vehiculeSpecificationService.mapper.MarqueMapper
 import au.gestionparcautomobile.vehiculeSpecificationService.mapper.ModeleMapper;
 import au.gestionparcautomobile.vehiculeSpecificationService.mapper.VehiculeSpecifMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 @Service
 @RequiredArgsConstructor
@@ -45,9 +44,8 @@ public class VehiculeSpecifServiceImpl implements IVehiculeSpecifService{
         VehiculeSpecif vehiculeSpecif = vehiculeSpecifMapper.toEntity(vehiculeSpecifRequest, savedModele);
 
         VehiculeSpecif savedVehiculeSpecif = vehiculeSpecifRepository.save(vehiculeSpecif);
-        VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifMapper.toResponse(savedVehiculeSpecif);
 
-        return vehiculeSpecifResponse;
+        return vehiculeSpecifMapper.toResponse(savedVehiculeSpecif);
     }
 
     @Override
