@@ -31,38 +31,38 @@ public class VehiculeServiceImpl implements IVehiculeService {
     @Override
     @Transactional
     public VehiculeResponse createVehicule(VehiculeRequest vehiculeRequest) {
-        System.out.println("34"+vehiculeRequest);
-        Vehicule vehicule = Vehicule.builder()
-                .dateAchat(vehiculeRequest.dateAchat())
-                .disponibilite(true)
-                .build();
+        try {
+            Vehicule vehicule = Vehicule.builder()
+                    .dateAchat(vehiculeRequest.dateAchat())
+                    .disponibilite(true)
+                    .build();
 
-        Vehicule savedVehicule = vehiculeRepository.save(vehicule);
-        Long vehiculeId = savedVehicule.getId();
+            Vehicule savedVehicule = vehiculeRepository.save(vehicule);
+            Long vehiculeId = savedVehicule.getId();
 
-        List<Long> assuranceIds = vehiculeRequest.assurance().stream()
-                .map(assuranceRequest -> {
-                    AssuranceRequest updatedAssuranceRequest = assuranceRequest.withVehiculeId(vehiculeId);
-                    AssuranceResponse assuranceResponse = assuranceClient.createAssurance(updatedAssuranceRequest);
-                    return assuranceResponse.id();
-                })
-                .collect(Collectors.toList());
+            List<Long> assuranceIds = vehiculeRequest.assurance().stream()
+                    .map(assuranceRequest -> {
+                        AssuranceRequest updatedAssuranceRequest = assuranceRequest.withVehiculeId(vehiculeId);
+                        AssuranceResponse assuranceResponse = assuranceClient.createAssurance(updatedAssuranceRequest);
+                        return assuranceResponse.id();
+                    })
+                    .collect(Collectors.toList());
 
-        savedVehicule.setAssuranceId(assuranceIds);
+            savedVehicule.setAssuranceId(assuranceIds);
 
-        VehiculeSpecifRequest updatedSpecifRequest = vehiculeRequest.specificationsVehicule().withVehiculeId(vehiculeId);
-        System.out.println("54"+updatedSpecifRequest);
-        VehiculeSpecifResponse specificationResponse = vehiculeSpecifClient.createVehiculeSpecif(updatedSpecifRequest);
+            VehiculeSpecifRequest updatedSpecifRequest = vehiculeRequest.specificationsVehicule().withVehiculeId(vehiculeId);
+            VehiculeSpecifResponse specificationResponse = vehiculeSpecifClient.createVehiculeSpecif(updatedSpecifRequest);
+            savedVehicule.setVehiculeSpecifId(specificationResponse.id());
+            Vehicule updatedVehicule = vehiculeRepository.save(savedVehicule);
 
-        savedVehicule.setVehiculeSpecifId(specificationResponse.id());
+            List<AssuranceResponse> assuranceResponses = assuranceIds.stream()
+                    .map(assuranceClient::getAssuranceById)
+                    .collect(Collectors.toList());
 
-        Vehicule updatedVehicule = vehiculeRepository.save(savedVehicule);
-
-        List<AssuranceResponse> assuranceResponses = assuranceIds.stream()
-                .map(assuranceClient::getAssuranceById)
-                .collect(Collectors.toList());
-
-        return vehiculeMapper.toResponse(updatedVehicule, assuranceResponses, specificationResponse);
+            return vehiculeMapper.toResponse(updatedVehicule, assuranceResponses, specificationResponse);
+        }catch (Exception e){
+            throw new RuntimeException("Failed to create vehicule", e);
+        }
     }
 
     @Override
@@ -72,41 +72,49 @@ public class VehiculeServiceImpl implements IVehiculeService {
             throw new RuntimeException("Véhicule non trouvé");
         }
 
+
         Vehicule vehicule = optionalVehicule.get();
+        System.out.println(vehicule);
+        System.out.println("\n1\n");
         List<AssuranceResponse> assuranceResponses = vehicule.getAssuranceId().stream()
                 .map(assuranceClient::getAssuranceById)
                 .collect(Collectors.toList());
+        System.out.println("\n2\n");
         VehiculeSpecifResponse specificationResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
         return vehiculeMapper.toResponse(vehicule, assuranceResponses, specificationResponse);
     }
 
     @Override
+    @Transactional
     public VehiculeResponse updateVehicule(Long id, VehiculeRequest vehiculeRequest) {
-        Optional<Vehicule> optionalVehicule = vehiculeRepository.findById(id);
-        if (optionalVehicule.isEmpty()) {
-            throw new RuntimeException("Véhicule non trouvé");
+        try {
+            Optional<Vehicule> optionalVehicule = vehiculeRepository.findById(id);
+            if (optionalVehicule.isEmpty()) {
+                throw new RuntimeException("Véhicule non trouvé");
+            }
+            Vehicule vehicule = optionalVehicule.get();
+
+            List<Long> assuranceIds = vehiculeRequest.assurance().stream()
+                    .map(assuranceRequest -> {
+                        System.out.println(assuranceRequest.id());
+                        AssuranceResponse assuranceResponse = assuranceClient.updateAssurance(assuranceRequest.id(), assuranceRequest);
+                        return assuranceResponse.id();
+                    })
+                    .collect(Collectors.toList());
+
+            VehiculeSpecifResponse specificationResponse = vehiculeSpecifClient.updateVehiculeSpecif(vehicule.getVehiculeSpecifId(), vehiculeRequest.specificationsVehicule());
+
+            vehicule.setDateAchat(vehiculeRequest.dateAchat());
+            vehicule.setAssuranceId(assuranceIds);
+
+            Vehicule updatedVehicule = vehiculeRepository.save(vehicule);
+            List<AssuranceResponse> assuranceResponses = assuranceIds.stream()
+                    .map(assuranceClient::getAssuranceById)
+                    .collect(Collectors.toList());
+            return vehiculeMapper.toResponse(updatedVehicule, assuranceResponses, specificationResponse);
+        }catch(Exception e){
+            throw new RuntimeException("Failed to update vehicule", e);
         }
-        Vehicule vehicule = optionalVehicule.get();
-
-        List<Long> assuranceIds = vehiculeRequest.assurance().stream()
-                .map(assuranceRequest -> {
-                    System.out.println("\nhey1:\n"+assuranceRequest.id());
-                    AssuranceResponse assuranceResponse = assuranceClient.updateAssurance(assuranceRequest.id(), assuranceRequest);
-                    System.out.println("\nhey2\n");
-                    return assuranceResponse.id();
-                })
-                .collect(Collectors.toList());
-
-        VehiculeSpecifResponse specificationResponse = vehiculeSpecifClient.updateVehiculeSpecif(vehicule.getVehiculeSpecifId(), vehiculeRequest.specificationsVehicule());
-
-        vehicule.setDateAchat(vehiculeRequest.dateAchat());
-        vehicule.setAssuranceId(assuranceIds);
-
-        Vehicule updatedVehicule = vehiculeRepository.save(vehicule);
-        List<AssuranceResponse> assuranceResponses = assuranceIds.stream()
-                .map(assuranceClient::getAssuranceById)
-                .collect(Collectors.toList());
-        return vehiculeMapper.toResponse(updatedVehicule, assuranceResponses, specificationResponse);
     }
 
     @Override
@@ -122,7 +130,7 @@ public class VehiculeServiceImpl implements IVehiculeService {
 
     @Override
     public List<VehiculeResponse> getAllVehicules() {
-        List<Vehicule> vehicules = vehiculeRepository.findAll();
+            List<Vehicule> vehicules = vehiculeRepository.findAll();
         return vehicules.stream().map(vehicule -> {
             List<AssuranceResponse> assuranceResponses = vehicule.getAssuranceId().stream()
                     .map(assuranceClient::getAssuranceById)

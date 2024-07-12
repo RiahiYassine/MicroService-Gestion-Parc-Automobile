@@ -29,7 +29,7 @@ public class VehiculeController {
 
 
     @PutMapping("/{id}")
-    public VehiculeResponse updateVehicle(@PathVariable Long id, @RequestBody VehiculeRequest vehiculeRequest) {
+    public VehiculeResponse updateVehicle(@PathVariable Long id, @RequestBody @Valid VehiculeRequest vehiculeRequest) {
         return iVehiculeService.updateVehicule(id, vehiculeRequest);
     }
 
@@ -43,5 +43,4 @@ public class VehiculeController {
     public List<VehiculeResponse> getVehicules() {
         return iVehiculeService.getAllVehicules();
     }
-    
 }

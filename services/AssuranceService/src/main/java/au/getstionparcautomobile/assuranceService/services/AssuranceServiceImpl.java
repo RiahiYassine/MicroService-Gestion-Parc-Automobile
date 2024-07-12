@@ -6,6 +6,7 @@ import au.getstionparcautomobile.assuranceService.mapper.AssuranceMapper;
 import au.getstionparcautomobile.assuranceService.records.AssuranceRequest;
 import au.getstionparcautomobile.assuranceService.records.AssuranceResponse;
 import au.getstionparcautomobile.assuranceService.repositories.AssuranceRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +19,13 @@ public class AssuranceServiceImpl implements IAssuranceService{
 
     @Override
     public AssuranceResponse getAssuranceById(Long id) {
+        System.out.println("id:"+id);
         Assurance assurance = assuranceRepository.findById(id).orElseThrow(() -> new AssuranceNotFoundException("Assurance not found for this id :: " + id));
         return assuranceMapper.toResponse(assurance);
     }
 
     @Override
+    @Transactional
     public AssuranceResponse createAssurance(AssuranceRequest assuranceRequest) {
         Assurance assurance = this.assuranceMapper.toEntity(assuranceRequest);
         Assurance assuranceSaved = this.assuranceRepository.save(assurance);
