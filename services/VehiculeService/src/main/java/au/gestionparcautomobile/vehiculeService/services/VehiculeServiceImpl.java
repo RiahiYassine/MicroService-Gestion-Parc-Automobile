@@ -1,6 +1,8 @@
 package au.gestionparcautomobile.vehiculeService.services;
 
 import au.gestionparcautomobile.vehiculeService.entities.Vehicule;
+import au.gestionparcautomobile.vehiculeService.enums.TypeCarburant;
+import au.gestionparcautomobile.vehiculeService.enums.TypeImmatriculation;
 import au.gestionparcautomobile.vehiculeService.feignClients.assurance.AssuranceClient;
 import au.gestionparcautomobile.vehiculeService.feignClients.assurance.AssuranceResponse;
 import au.gestionparcautomobile.vehiculeService.feignClients.vehiculeSpecif.VehiculeSpecifClient;
@@ -11,9 +13,9 @@ import au.gestionparcautomobile.vehiculeService.records.VehiculeRequest;
 import au.gestionparcautomobile.vehiculeService.records.VehiculeResponse;
 import au.gestionparcautomobile.vehiculeService.records.VehiculeSpecifRequest;
 import au.gestionparcautomobile.vehiculeService.repositories.VehiculeRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -138,5 +140,170 @@ public class VehiculeServiceImpl implements IVehiculeService {
             var specificationResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
             return vehiculeMapper.toResponse(vehicule, assuranceResponses, specificationResponse);
         }).collect(Collectors.toList());
+    }
+
+
+
+    @Override
+    public List<VehiculeResponse> getVehiculesByDisponibilite(boolean disponibilite) {
+        List<Vehicule> vehicules = vehiculeRepository.findByDisponibilite(disponibilite);
+        return vehicules.stream()
+                .map(vehicule -> {
+                    List<AssuranceResponse> assuranceResponses = vehicule.getAssuranceId().stream()
+                            .map(assuranceClient::getAssuranceById)
+                            .collect(Collectors.toList());
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeMapper.toResponse(vehicule, assuranceResponses, vehiculeSpecifResponse);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VehiculeResponse> getVehiculesByTypeCarburant(TypeCarburant typeCarburant) {
+        List<Vehicule> vehicules = vehiculeRepository.findAll();
+        return vehicules.stream()
+                .filter(vehicule -> {
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeSpecifResponse.typeCarburant() == typeCarburant;
+                })
+                .map(vehicule -> {
+                    List<AssuranceResponse> assuranceResponses = vehicule.getAssuranceId().stream()
+                            .map(assuranceClient::getAssuranceById)
+                            .collect(Collectors.toList());
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeMapper.toResponse(vehicule, assuranceResponses, vehiculeSpecifResponse);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VehiculeResponse> getVehiculesByModeleId(Long modeleId) {
+        List<Vehicule> vehicules = vehiculeRepository.findAll();
+        return vehicules.stream()
+                .filter(vehicule -> {
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeSpecifResponse.modele().id().equals(modeleId);
+                })
+                .map(vehicule -> {
+                    List<AssuranceResponse> assuranceResponses = vehicule.getAssuranceId().stream()
+                            .map(assuranceClient::getAssuranceById)
+                            .collect(Collectors.toList());
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeMapper.toResponse(vehicule, assuranceResponses, vehiculeSpecifResponse);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VehiculeResponse> getVehiculesByMarqueId(Long marqueId) {
+        List<Vehicule> vehicules = vehiculeRepository.findAll();
+        return vehicules.stream()
+                .filter(vehicule -> {
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeSpecifResponse.modele().marque().id().equals(marqueId);
+                })
+                .map(vehicule -> {
+                    List<AssuranceResponse> assuranceResponses = vehicule.getAssuranceId().stream()
+                            .map(assuranceClient::getAssuranceById)
+                            .collect(Collectors.toList());
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeMapper.toResponse(vehicule, assuranceResponses, vehiculeSpecifResponse);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void assignAssuranceToVehicule(Long vehiculeId, Long assuranceId) {
+        Vehicule vehicule = vehiculeRepository.findById(vehiculeId).orElseThrow(() -> new RuntimeException("Vehicule not found"));
+        vehicule.getAssuranceId().add(assuranceId);
+        vehiculeRepository.save(vehicule);
+    }
+
+    @Override
+    public void removeAssuranceFromVehicule(Long vehiculeId, Long assuranceId) {
+        Vehicule vehicule = vehiculeRepository.findById(vehiculeId).orElseThrow(() -> new RuntimeException("Vehicule not found"));
+        vehicule.getAssuranceId().remove(assuranceId);
+        vehiculeRepository.save(vehicule);
+    }
+
+
+    @Override
+    public List<VehiculeResponse> getVehiculesByNChassis(String nChassis) {
+        List<Vehicule> vehicules = vehiculeRepository.findAll();
+        return vehicules.stream()
+                .filter(vehicule -> {
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeSpecifResponse.nChassis().equals(nChassis);
+                })
+                .map(vehicule -> {
+                    List<AssuranceResponse> assuranceResponses = vehicule.getAssuranceId().stream()
+                            .map(assuranceClient::getAssuranceById)
+                            .collect(Collectors.toList());
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeMapper.toResponse(vehicule, assuranceResponses, vehiculeSpecifResponse);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VehiculeResponse> getVehiculesByTypeImmatriculation(TypeImmatriculation typeImmatriculation) {
+        List<Vehicule> vehicules = vehiculeRepository.findAll();
+        return vehicules.stream()
+                .filter(vehicule -> {
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeSpecifResponse.typeImmatriculation() == typeImmatriculation;
+                })
+                .map(vehicule -> {
+                    List<AssuranceResponse> assuranceResponses = vehicule.getAssuranceId().stream()
+                            .map(assuranceClient::getAssuranceById)
+                            .collect(Collectors.toList());
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeMapper.toResponse(vehicule, assuranceResponses, vehiculeSpecifResponse);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VehiculeResponse> getVehiculesByImmatriculation(String immatriculation) {
+        List<Vehicule> vehicules = vehiculeRepository.findAll();
+        return vehicules.stream()
+                .filter(vehicule -> {
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeSpecifResponse.immatriculation().equals(immatriculation);
+                })
+                .map(vehicule -> {
+                    List<AssuranceResponse> assuranceResponses = vehicule.getAssuranceId().stream()
+                            .map(assuranceClient::getAssuranceById)
+                            .collect(Collectors.toList());
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeMapper.toResponse(vehicule, assuranceResponses, vehiculeSpecifResponse);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VehiculeResponse> getVehiculesByNombreDePlaces(int nombreDePlaces) {
+        List<Vehicule> vehicules = vehiculeRepository.findAll();
+        return vehicules.stream()
+                .filter(vehicule -> {
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeSpecifResponse.nombreDePlaces() == nombreDePlaces;
+                })
+                .map(vehicule -> {
+                    List<AssuranceResponse> assuranceResponses = vehicule.getAssuranceId().stream()
+                            .map(assuranceClient::getAssuranceById)
+                            .collect(Collectors.toList());
+                    VehiculeSpecifResponse vehiculeSpecifResponse = vehiculeSpecifClient.getVehiculeSpecifById(vehicule.getVehiculeSpecifId());
+                    return vehiculeMapper.toResponse(vehicule, assuranceResponses, vehiculeSpecifResponse);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AssuranceResponse> getAllAssurancesByVehiculeId(Long vehiculeId) {
+        Vehicule vehicule = vehiculeRepository.findById(vehiculeId).orElseThrow(() -> new RuntimeException("Vehicule not found"));
+        return vehicule.getAssuranceId().stream()
+                .map(assuranceClient::getAssuranceById)
+                .collect(Collectors.toList());
     }
 }

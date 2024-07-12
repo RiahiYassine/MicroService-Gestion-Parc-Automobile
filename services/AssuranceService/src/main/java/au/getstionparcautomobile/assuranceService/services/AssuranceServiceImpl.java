@@ -6,9 +6,13 @@ import au.getstionparcautomobile.assuranceService.mapper.AssuranceMapper;
 import au.getstionparcautomobile.assuranceService.records.AssuranceRequest;
 import au.getstionparcautomobile.assuranceService.records.AssuranceResponse;
 import au.getstionparcautomobile.assuranceService.repositories.AssuranceRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,4 +55,67 @@ public class AssuranceServiceImpl implements IAssuranceService{
         this.assuranceRepository.deleteById(id);
     }
 
+    @Override
+    @Transactional(readOnly=true)
+    public List<AssuranceResponse> getAllAssurances() {
+        try {
+            List<Assurance> assurances = assuranceRepository.findAll();
+            return assurances.stream()
+                    .map(assuranceMapper::toResponse)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to retrieve assurances", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AssuranceResponse> findByNomFournisseur(String nomFournisseur) {
+        List<Assurance> assurances = assuranceRepository.findByNomFournisseur(nomFournisseur);
+        return assurances.stream()
+                .map(assuranceMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AssuranceResponse> findByVehiculeId(Long vehiculeId) {
+        List<Assurance> assurances = assuranceRepository.findByVehiculeId(vehiculeId);
+        return assurances.stream()
+                .map(assuranceMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countByNomFournisseur(String nomFournisseur) {
+        return assuranceRepository.countByNomFournisseur(nomFournisseur);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AssuranceResponse findAssuranceByNumeroPolice(String numeroPolice) {
+        Assurance assurance = assuranceRepository.findByNumeroPolice(numeroPolice)
+                .orElseThrow(() -> new AssuranceNotFoundException("Assurance not found with numeroPolice: " + numeroPolice));
+        return assuranceMapper.toResponse(assurance);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AssuranceResponse> findAllAssuranceExpired() {
+        List<Assurance> assurances = assuranceRepository.findByDateFinCouvertureBefore(new Date());
+        return assurances.stream()
+                .map(assuranceMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AssuranceResponse> findAssurancesByExpirationDate(Date expirationDate) {
+        List<Assurance> assurances = assuranceRepository.findByDateFinCouverture(expirationDate);
+        return assurances.stream()
+                .map(assuranceMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 }

@@ -9,8 +9,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="AssuranceService" />
         <module name="configService" />
-        <module name="VehiculeService" />
         <module name="VehiculeSpecificationService" />
+        <module name="VehiculeService" />
         <module name="DiscoveryService" />
         <module name="gatewayService" />
       </profile>

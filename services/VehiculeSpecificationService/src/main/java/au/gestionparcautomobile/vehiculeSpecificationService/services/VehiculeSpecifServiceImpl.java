@@ -10,10 +10,10 @@ import au.gestionparcautomobile.vehiculeSpecificationService.records.VehiculeSpe
 import au.gestionparcautomobile.vehiculeSpecificationService.repositories.MarqueRepository;
 import au.gestionparcautomobile.vehiculeSpecificationService.repositories.ModeleRepository;
 import au.gestionparcautomobile.vehiculeSpecificationService.repositories.VehiculeSpecifRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import au.gestionparcautomobile.vehiculeSpecificationService.mapper.VehiculeSpecifMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
