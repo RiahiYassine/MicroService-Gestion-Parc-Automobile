@@ -4,10 +4,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record ModeleRequest(
+
         Long id,
-        @NotBlank
+
+        @NotBlank(message = "Le nom du modèle ne doit pas être vide.")
         String modeleName,
-        @NotNull
+
+        @NotNull(message = "L'ID de la marque ne doit pas être nul.")
         MarqueRequest marqueRequest
 ) {
 }

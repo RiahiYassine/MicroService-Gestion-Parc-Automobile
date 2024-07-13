@@ -21,7 +21,7 @@ public class VehiculeMapper {
         List<Long> assuranceIds = vehiculeRequest.assurance().stream()
                 .map(AssuranceRequest::id)
                 .collect(Collectors.toList());
-        vehicule.setAssuranceId(assuranceIds);
+        vehicule.setAssurances(assuranceIds);
         vehicule.setVehiculeSpecifId(vehiculeRequest.specificationsVehicule().id());
         return vehicule;
     }

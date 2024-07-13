@@ -1,6 +1,6 @@
 package au.gestionparcautomobile.vehiculeSpecificationService.handler;
 
-import au.gestionparcautomobile.vehiculeSpecificationService.exceptions.AssuranceNotFoundException;
+import au.gestionparcautomobile.vehiculeSpecificationService.exceptions.VehiculeSpecifNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -15,8 +15,8 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AssuranceNotFoundException.class)
-    public ResponseEntity<String> handle(AssuranceNotFoundException exp) {
+    @ExceptionHandler(VehiculeSpecifNotFoundException.class)
+    public ResponseEntity<String> handle(VehiculeSpecifNotFoundException exp) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(exp.getMsg());

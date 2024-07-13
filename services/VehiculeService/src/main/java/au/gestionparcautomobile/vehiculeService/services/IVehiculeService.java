@@ -28,4 +28,8 @@ public interface IVehiculeService{
     List<VehiculeResponse> getVehiculesByImmatriculation(String immatriculation);
     List<VehiculeResponse> getVehiculesByNombreDePlaces(int nombreDePlaces);
     List<AssuranceResponse> getAllAssurancesByVehiculeId(Long vehiculeId);
+    List<VehiculeResponse> getVehiculesByModeleIdAndMarqueId(Long modeleId, Long marqueId);
+
+    //
+
 }

@@ -5,6 +5,6 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper=true)
-public class AssuranceNotFoundException extends RuntimeException {
+public class VehiculeSpecifNotFoundException extends RuntimeException {
     private final String msg;
 }
